@@ -1,113 +1,80 @@
-/*hostfilepatcher by iHacker and malontop with the help of c_axis ;)
+//README
+/*iPatcher by iHacker and malontop with the help of c_axis ;)
 http://twitter.com/iHacker
 http://twitter.com/malontop
-http://twitter.com/c_axis*/
+http://twitter.com/c_axis
+
+Run as root
+*/
 
 #include <stdio.h>
 #include <string.h>
 
-#define HOSTFILE "/etc/hosts"
-#define BACKUPFILE "/etc/hosts.backup"
-#define NEWHOST "74.208.105.171 gs.apple.com "
+//#define HOSTFILE "/etc/hosts"
+//#define BACKUPFILE "/etc/hosts.backup"
 
-// NOTE: Thanks c_axis!
-int checkifPatched(){
+#define HOSTFILE "./text"
+#define BACKUPFILE "./text.backup"
 
-	FILE *hosts = fopen(HOSTFILE, "rb");
-	char buffer[32];
-	int ret_val = -1; // default return value indicates problematic fopen() call; if the file can be read, ret_val will be changed to 0 or 1;
+#define NEWHOST "74.208.105.171 gs.apple.com"
 
-	if(hosts != NULL) {
-
-		// loop UNTIL the string is found, not until every line is read
-		// it may not make a difference in some cases; other times, it will be significantly faster
-		while(fgets(buffer, 32, hosts) != NULL && ret_val != 0) {
-
-			// branch eliminated; faster, unconditional code
-			// ret_val will be 0 if the string was found; otherwise 1
-			ret_val = (strstr(buffer, NEWHOST) == NULL);
-
+int checkifPatched(FILE *fp){
+	char buffer[BUFSIZ];
+	int retVal = -1;
+	if(fp != NULL){
+		fseek(fp, 0, SEEK_SET);
+		while(fgets(buffer, BUFSIZ, fp) != NULL && retVal != 0){
+			retVal = (strstr(buffer, NEWHOST) == NULL);
 		}
-
 	}
-
-	fclose(hosts);
-	return ret_val;
+	return(retVal);
 }
 
-int patchFile(){
-	FILE *hosts = fopen(HOSTFILE, "ab");
-	if(hosts != NULL)
-	{
-		fprintf(hosts, NEWHOST);
-		fprintf(hosts, "\n");
-		fclose(hosts);
+int patchFile(FILE *fp, const char *newhost){
+	if((fprintf(fp, newhost) > 0) && (fprintf(fp, "\n") > 0)){
 		return(0);
-	}else
-	{
-		fclose(hosts);
-		return(-1);
 	}
+	return(-1);
 }
 
-int backupFile(){
-	FILE *orig = fopen(HOSTFILE, "rb");
+int backupFile(FILE *orig){
 	FILE *backup = fopen(BACKUPFILE, "wb");
-	char ch;
-	if(orig != NULL && backup != NULL){
-		while(!feof(orig)){
-			ch = fgetc(orig);
-			if(ferror(orig)){
-				fclose(orig);
-				fclose(backup);
-				return(-1);
-			}
-			if(!feof(backup)){
-				fputc(ch, backup);
-			}
-			if(ferror(backup)){
-				fclose(orig);
-				fclose(backup);
-				return(-1);
-			}
+	int retVal = -1;
+	if(backup != NULL){
+		fseek(orig, 0, SEEK_SET);
+		int ch;
+		while( retVal = ((ch = fgetc(orig)) != EOF) && (fputc(ch, backup) != EOF)){
 		}
-	}else{
-		fclose(orig);
-		fclose(backup);
-		return(-1);
+	
 	}
-	fclose(orig);
 	fclose(backup);
-	return(0);
+	return(retVal);
 }
 
-int main(int argc, char* argv[])
+int main()
 {
-	printf("Patch the host file? Y or N: ");
+	printf("\nWelcome to iPatcher.\n");
+	printf("Patch the host file, located at \"%s\"? Y or N: ", HOSTFILE);
+	int retVal = 0;
 	char choice;
 	scanf("%c", &choice);
 
 	if(choice == 'Y' || choice == 'y')
 	{
-		puts("Check if file is already patched...");
-		if(checkifPatched() != 0){
-			puts("File not patched yet.\n");
-			puts("Backing up...");
-			if(backupFile() == 0){
-				puts("Backup was successful.\n");
-				puts("Patching hostfile...");
-				if(patchFile() == 0)
-					puts("Succesfully patched host file.\n");	
-				else
-					perror("ERROR: FILE NOT FOUND");
-			}else
-				perror("Unable to backup hostfile");
-		}else{
-			puts("Host file is already patched\n");
-			return(0);
+		FILE *hosts = fopen(HOSTFILE, "ab+");
+		puts("Opening hostfile...");
+		if(retVal = (hosts != NULL)){
+			puts("Check if file is already patched...");
+			if (retVal = (checkifPatched(hosts) != 0)){
+				puts("Backing up...");
+				if (retVal = (backupFile(hosts) == 0)){
+					puts("Patching hostfile...");
+					retVal = !(patchFile(hosts, NEWHOST));
+				}
+			}
 		}
-	}else
-		return(1);
-
-	return(0);
+		fclose(hosts);
+	}
+	puts( (retVal) ? "Okay" : "Failed" ); //i know, could be better
+	return(retVal);
 }
