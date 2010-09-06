@@ -50,11 +50,10 @@ int patchFile()
 
 int main(int argc, char * argv[])
 {
-	char choice;
+	if(argc != 1)
 	printf("Patch iTunes Host File? Y or N: ");
-	scanf("%s", choice);
 
-	if(choice == 'Y' || choice == 'Y')
+	if(argv[1] == 'Y')
 	{
 		printf("Checking if file is already patched...");
 		checkIfPatched();
@@ -62,7 +61,7 @@ int main(int argc, char * argv[])
 		if(checkIfPatched != 0)
 		{
 			printf("Patching iTunes Host File...");
-		    patchFile();
+		         patchFile();
 		}
 		else
 		{
