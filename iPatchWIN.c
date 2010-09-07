@@ -58,7 +58,7 @@ int main(int argc, char * argv[])
 	if(argv[1] == 'Y')
 	{
 		printf("Checking if file is already patched...");
-                if(checkIfPatched != 0)
+                if(checkIfPatched() != 0)
 		{
 			printf("Patching iTunes Host File.")
 		}
