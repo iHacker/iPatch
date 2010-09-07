@@ -51,7 +51,9 @@ int patchFile()
 int main(int argc, char * argv[])
 {
 	if(argc != 1)
-	printf("Patch iTunes Host File? Y or N: ");
+        {
+	   printf("Patch iTunes Host File? Y or N: ");
+        }
 
 	if(argv[1] == 'Y')
 	{
