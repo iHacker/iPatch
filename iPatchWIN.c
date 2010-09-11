@@ -13,25 +13,25 @@
 #define HOSTPATCH "74.208.105.171 gs.apple.com"
 
 //Searches for a string in a file and returns 0 if found. Thanks to c_axis for cleaning up the extremely messy previous code.
-int stringSearch(char* file, char* string)  
+int stringSearch(const char* file, const char* string)  
 {
-	FILE* f - fopen(file, "r");
+	char buffer[32];
+	int ret_val = -1;
+
+        FILE* f = fopen(file, "r");
 	if(f == NULL) {
 		printf("File not found\n");
-		return NULL;
 	} else if(f) {
-		char buffer[32];
-		int ret_val = -1;
 		while(fgets(buffer, 32, f) != NULL && ret_val != 0)
 		{
-			ret_val == (strstr(buffer, HOSPATCH) == NULL);
+			ret_val == (strstr(buffer, HOSTPATCH) == NULL);
 		}
 	}
 		fclose(f);
 		return ret_val;
 }
 //Pointless wrapper function to write a string to a file
-int writeString(char* file, char* patch) 
+int writeString(const char* file, const char* patch) 
 {
 	FILE* f = fopen(file, "r+");
 	if(f != NULL)
@@ -43,7 +43,7 @@ int writeString(char* file, char* patch)
 	}
 	else
 	{
-		puts("Error writing to file.\n");
+		printf("Error writing to file.\n");
 		fclose(f);
 		return -1;
 	}
@@ -55,6 +55,6 @@ int main(int argc, char* argv[])
 		puts("Invalid argument");
 	} else if(argv[1] == '-Y' && stringSearch(HOSTFILE, HOSTPATCH) == 0 && writeString(HOSTFILE, HOSTPATCH) == 0)
 	{
-	  puts("Successfully wrote to iTunes Host File.\n");
+	        puts("Successfully wrote to iTunes Host File.");
 	}
 }
