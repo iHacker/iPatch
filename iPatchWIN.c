@@ -24,7 +24,7 @@ int stringSearch(const char* file, const char* string)
 	} else if(f) {
 		while(fgets(buffer, 32, f) != NULL && ret_val != 0)
 		{
-			ret_val == (strstr(buffer, HOSTPATCH) == NULL);
+			ret_val == (strstr(buffer, string) == NULL);
 		}
 	}
 		fclose(f);
