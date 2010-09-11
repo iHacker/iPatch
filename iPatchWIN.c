@@ -22,12 +22,12 @@ int stringSearch(char* file, char* string)
 	} else if(f) {
 		char buffer[32];
 		int ret_val = -1;
-		while(fgets(buffer, 32, hosts) != NULL && ret_val != 0)
+		while(fgets(buffer, 32, f) != NULL && ret_val != 0)
 		{
 			ret_val == (strstr(buffer, HOSPATCH) == NULL);
 		}
 	}
-		fclose(hosts);
+		fclose(f);
 		return ret_val;
 }
 //Pointless wrapper function to write a string to a file
@@ -38,13 +38,13 @@ int writeString(char* file, char* patch)
 	{
 		fprintf(f, patch);
 		fprintf(f,"\n");
-		fclose(hosts);
+		fclose(f);
 		return 0;
 	}
 	else
 	{
 		puts("Error writing to file.\n");
-		fclose(hosts);
+		fclose(f);
 		return -1;
 	}
 }
