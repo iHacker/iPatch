@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 	if(strlen(argv[1]) > 2)
 	{
 		puts("Invalid argument");
-	} else if(argv[1] == '-Y' && stringSearch(HOSTFILE, HOSTPATCH) == 1 && writeString(HOSTFILE, HOSTPATCH) == 0)
+	} else if(argv[1] == '-Y' && stringSearch(HOSTFILE, HOSTPATCH) == 0 && writeString(HOSTFILE, HOSTPATCH) == 0)
 	{
 	  puts("Successfully wrote to iTunes Host File.\n");
 	}
