@@ -1,84 +1,60 @@
-// iPatchWIN.c
-// Credits - iHacker, malontop, c_axis
+/*
+ * iPatchWIN.c
+ *
+ *  Created on: September 10, 2010
+ *      Author: Joshua Bailey
+ *      Credits: iHacker, malontop, c_axis
+ */
+
 #include <stdio.h>
 #include <string.h>
 
-#define HOSTFILE "C:\WINDOWS\system32\drivers\etc\hosts.txt"
-#define NHOSTPATCH "74.208.105.171 gs.apple.com"
+#define HOSTFILE "C:\WINDOWS\system32\drivers\etc\hosts"
+#define HOSTPATCH "74.208.105.171 gs.apple.com"
 
-int checkIfPatched() // NOTE: Props to c_axis for his help on this
+//Searches for a string in a file and returns 0 if found. Thanks to c_axis for cleaning up the extremely messy previous code.
+int stringSearch(char* file, char* string)  
 {
-	
-	FILE *hosts = fopen(HOSTFILE, "rb");
-	char buffer[32];
-	int ret_val = -1; // default return value indicates problematic fopen() call; if the file can be read, ret_val will be changed to 0 or 1;
-	
-	if(hosts != NULL) {
-		
-		// loop UNTIL the string is found, not until every line is read
-		// it may not make a difference in some cases; other times, it will be significantly faster
-		while(fgets(buffer, 32, hosts) != NULL && ret_val != 0) {
-			
-			// branch eliminated; faster, unconditional code
-			// ret_val will be 0 if the string was found; otherwise 1
-			ret_val = (strstr(buffer, NHOSTPATCH) == NULL);
-			
+	FILE* f - fopen(file, "r");
+	if(f == NULL) {
+		printf("File not found\n");
+		return NULL;
+	} else if(f) {
+		char buffer[32];
+		int ret_val = -1;
+		while(fgets(buffer, 32, hosts) != NULL && ret_val != 0)
+		{
+			ret_val == (strstr(buffer, HOSPATCH) == NULL);
 		}
-		
 	}
-	
-	fclose(hosts);
-	return ret_val;
+		fclose(hosts);
+		return ret_val;
 }
-
-int patchFile()
+//Pointless wrapper function to write a string to a file
+int writeString(char* file, char* patch) 
 {
-	FILE * hosts = fopen(HOSTFILE, "r+");
-	if(hosts != NULL)
+	FILE* f = fopen(file, "r+");
+	if(f != NULL)
 	{
-		fprintf(hosts, NHOSTPATCH);
-		fprintf(hosts,"\n");
+		fprintf(f, patch);
+		fprintf(f,"\n");
 		fclose(hosts);
 		return 0;
 	}
 	else
 	{
+		puts("Error writing to file.\n");
 		fclose(hosts);
 		return -1;
 	}
 }
-
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
-	if(argc != 1)
-        {
-	   printf("Patch iTunes Host File? Y or N: ");
-        }
-
-	if(argv[1] == 'Y')
+	if(strlen(argv[1]) > 2)
 	{
-		printf("Checking if file is already patched...");
-                if(checkIfPatched() != 0)
-		{
-			printf("Patching iTunes Host File.")
-		}
-		else
-		{
-			perror("ERROR: FILE ALREADY PATCHED");
-		}
-		if(patchFile() == 0)
-		{
-			printf("iTunes Host File succesfully patched!\n");
-		}
-		else 
-		{
-			perror("ERROR: COULD NOT PATCH FILE");
-		}
-	}
-	else
+		puts("Invalid argument");
+	} else if(argv[1] == '-Y' && stringSearch(HOSTFILE, HOSTPATCH) == 1 && writeString(HOSTFILE, HOSTPATCH) == 0)
 	{
-		return -1;
+	  puts("Successfully wrote to iTunes Host File.\n");
 	}
-
-	return 0;
 }
