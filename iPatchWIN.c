@@ -1,9 +1,7 @@
 /*
  * iPatchWIN.c
- *
  *  Created on: September 10, 2010
  *      Author: Joshua Bailey
- *      Credits: iHacker, malontop, c_axis
  */
 
 #include <stdio.h>
